@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CRUD Template (HTML + CSS Only)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    /* Simple modal using CSS only */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+    .modal-box {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 350px;
+    }
+    /* Open modal when targeted */
+    :target {
+        display: flex;
+    }
+    .footer_btnnext{
+        border: 1px red solid;
+        background-color: antiquewhite;
+        font-size: 18px;
+        height: 40px;
+        width: 100px;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        
+    }
+</style>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">CRUD Template (HTML + CSS Only)</h2>
+
+    <!-- ADD Button -->
+    <a href="#addModal" class="btn btn-primary mb-3">Add New Item</a>
+
+    <!-- TABLE -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Sr.no</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th width="180px">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in uid %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.item_name}}</td>
+                <td>{{i.item_discription}}</td>
+                <td>
+                    <a href="#editModal-{{i.id}}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="#deleteModal-{{i.id}}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<form action="{% url 'crud_b' %}">
+<button type="submit" class="footer_btnnext">Next</button>
+</form>
+
+<!-- ADD MODAL -->
+<div id="addModal" class="modal-overlay">
+    <div class="modal-box">
+        <h4>Add Item</h4>
+        <form action="{% url 'adddata_crud_a' %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="name">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="discription">
+            </div>
+
+            <button class="btn btn-success w-100" type="submit">Save</button><br><br>
+            <a href="#" class="btn btn-secondary w-100">Close</a>
+        </form>
+    </div>
+</div>
+
+
+<!-- EDIT MODAL -->
+{% for i in uid %}
+<div id="editModal-{{i.id}}" class="modal-overlay">
+    <div class="modal-box">
+        <h4>Edit Item</h4>
+        <form action="{% url 'editdata_crud_a' i.id %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" value="{{i.item_name}}" name="name"> 
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" value="{{i.item_discription}}" name="discription">
+            </div>
+
+            <button class="btn btn-warning w-100" type="submit">Update</button><br><br>
+            <a href="#" class="btn btn-secondary w-100">Close</a>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- DELETE CONFIRMATION -->
+ {% for i in uid %}
+<div id="deleteModal-{{i.id}}" class="modal-overlay">
+    <div class="modal-box text-center">
+        <form action="{% url 'deletedata_crud_a' i.id %}" method="post">
+            {% csrf_token %}
+        <h4>Are you sure you want to delete?</h4>
+        <br>
+        <button class="btn btn-danger w-100" type="submit">Yes, Delete</button>
+        <br><br>
+        <a href="#" class="btn btn-secondary w-100">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+</body>
+</html>
